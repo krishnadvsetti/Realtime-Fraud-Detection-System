@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+data/creditcard.csv
+data/*.csv
+mlruns/
+__pycache__/
+*.pyc
