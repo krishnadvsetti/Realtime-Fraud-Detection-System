@@ -222,3 +222,10 @@ data/*.csv
 mlruns/
 __pycache__/
 *.pyc
+
+data/creditcard.csv
+fraud_alerts.csv
+mlruns/
+mlflow.db
+__pycache__/
+*.pyc
