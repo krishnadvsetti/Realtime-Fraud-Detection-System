@@ -2,34 +2,53 @@ from kafka import KafkaConsumer
 import json
 import pandas as pd
 import os
+import joblib
+
+model = joblib.load(
+    "models/streaming_fraud_model.pkl"
+)
 
 consumer = KafkaConsumer(
     "transactions",
     bootstrap_servers="localhost:9092",
     auto_offset_reset="earliest",
-    value_deserializer=lambda m: json.loads(m.decode("utf-8"))
+    value_deserializer=lambda m:
+        json.loads(m.decode("utf-8"))
 )
 
-print("Fraud Detection Started")
+print("ML Fraud Detection Started")
 
 for msg in consumer:
 
     tx = msg.value
 
-    risk_score = 0
+    features = pd.DataFrame(
+        [[
+            tx["amount"],
+            tx["merchant_id"],
+            tx["hour"]
+        ]],
+        columns=[
+            "amount",
+            "merchant_id",
+            "hour"
+        ]
+    )
 
-    if tx["amount"] > 4000:
-        risk_score += 50
+    prediction = model.predict(features)[0]
 
-    if tx["hour"] < 5:
-        risk_score += 30
+    fraud_probability = (
+        model.predict_proba(features)[0][1]
+    )
 
-    if tx["merchant_id"] > 90:
-        risk_score += 20
+    risk_score = round(
+        fraud_probability * 100,
+        2
+    )
 
-    prediction = (
+    prediction_label = (
         "FRAUD"
-        if risk_score >= 50
+        if prediction == 1
         else "GENUINE"
     )
 
@@ -38,7 +57,7 @@ for msg in consumer:
         "merchant_id": tx["merchant_id"],
         "hour": tx["hour"],
         "risk_score": risk_score,
-        "prediction": prediction
+        "prediction": prediction_label
     }
 
     df = pd.DataFrame([record])
