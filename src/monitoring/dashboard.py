@@ -1,6 +1,7 @@
+
 import streamlit as st
 import pandas as pd
-import os
+from sqlalchemy import create_engine
 
 st.set_page_config(
     page_title="Real-Time Fraud Detection Dashboard",
@@ -10,22 +11,29 @@ st.set_page_config(
 
 st.title("🚨 Real-Time Fraud Detection Dashboard")
 
-file_path = "fraud_alerts.csv"
+DATABASE_URL = (
+    "postgresql://frauduser:fraudpass@localhost:5432/frauddb"
+)
 
-if os.path.exists(file_path):
+try:
 
-    df = pd.read_csv(file_path)
+    engine = create_engine(DATABASE_URL)
+
+    df = pd.read_sql(
+        "SELECT * FROM fraud_alerts ORDER BY id DESC",
+        engine
+    )
 
     if len(df) > 0:
 
         total_transactions = len(df)
 
-        frauds = len(
+        fraud_count = len(
             df[df["prediction"] == "FRAUD"]
         )
 
         fraud_rate = round(
-            (frauds / total_transactions) * 100,
+            (fraud_count / total_transactions) * 100,
             2
         )
 
@@ -43,7 +51,7 @@ if os.path.exists(file_path):
 
         col2.metric(
             "Fraud Alerts",
-            frauds
+            fraud_count
         )
 
         col3.metric(
@@ -58,10 +66,12 @@ if os.path.exists(file_path):
 
         st.divider()
 
-        st.subheader("Recent Transactions")
+        st.subheader(
+            "Recent Transactions"
+        )
 
         st.dataframe(
-            df.tail(20),
+            df.head(20),
             use_container_width=True
         )
 
@@ -71,15 +81,19 @@ if os.path.exists(file_path):
 
         with col1:
 
-            st.subheader("Risk Score Trend")
+            st.subheader(
+                "Risk Score Trend"
+            )
 
             st.line_chart(
-                df["risk_score"].tail(100)
+                df["risk_score"].head(100)
             )
 
         with col2:
 
-            st.subheader("Fraud vs Genuine")
+            st.subheader(
+                "Fraud vs Genuine"
+            )
 
             prediction_counts = (
                 df["prediction"]
@@ -92,16 +106,18 @@ if os.path.exists(file_path):
 
         st.divider()
 
-        st.subheader("High-Risk Transactions")
+        st.subheader(
+            "High Risk Transactions"
+        )
 
         high_risk = df[
-            df["risk_score"] >= 80
+            df["risk_score"] >= 50
         ]
 
         if len(high_risk) > 0:
 
             st.dataframe(
-                high_risk.tail(20),
+                high_risk.head(20),
                 use_container_width=True
             )
 
@@ -114,15 +130,15 @@ if os.path.exists(file_path):
     else:
 
         st.warning(
-            "No transactions available yet."
+            "No transactions found in database."
         )
 
-else:
+except Exception as e:
 
-    st.warning(
-        "Waiting for fraud_alerts.csv..."
+    st.error(
+        f"Database Error: {e}"
     )
 
 st.caption(
-    "Real-Time Fraud Detection System | Kafka + XGBoost + FastAPI + Streamlit"
+    "Kafka + XGBoost + PostgreSQL + FastAPI + Streamlit + MLflow"
 )
