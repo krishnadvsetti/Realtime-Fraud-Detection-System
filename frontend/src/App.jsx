@@ -1,171 +1,86 @@
-
 import { useEffect, useState } from "react";
+import { Container, CircularProgress, Alert } from "@mui/material";
+
+import Navbar from "./components/Navbar";
+import DashboardCards from "./components/DashboardCards";
+import FraudPieChart from "./components/FraudPieChart";
+import TransactionsTable from "./components/TransactionsTable";
+import LiveStatus from "./components/LiveStatus";
+import Footer from "./components/Footer";
+
 import axios from "axios";
 
-function App() {
+const API =
+  "https://friendly-invention-xr5gvxgg7w9wc6wq7-8000.app.github.dev";
 
-  const [metrics, setMetrics] = useState({});
+function App() {
+  const [metrics, setMetrics] = useState(null);
+  const [summary, setSummary] = useState([]);
   const [transactions, setTransactions] = useState([]);
 
-  const API =
-  "https://YOUR-CODESPACE-URL-8000.app.github.dev";
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-
-    fetchData();
-
-    const interval = setInterval(
-      fetchData,
-      5000
-    );
-
-    return () => clearInterval(interval);
-
-  }, []);
-
-  const fetchData = async () => {
-
+  const loadDashboard = async () => {
     try {
+      const [m, s, t] = await Promise.all([
+        axios.get(`${API}/metrics`),
+        axios.get(`${API}/fraud-summary`),
+        axios.get(`${API}/transactions`),
+      ]);
 
-      const metricsResponse =
-        await axios.get(
-          `${API}/metrics`
-        );
+      setMetrics(m.data);
+      setSummary(s.data);
+      setTransactions(t.data);
 
-      const transactionsResponse =
-        await axios.get(
-          `${API}/transactions`
-        );
-
-      setMetrics(
-        metricsResponse.data
-      );
-
-      setTransactions(
-        transactionsResponse.data
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
+      setLoading(false);
+      setError("");
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      setError("Unable to connect to backend.");
     }
   };
 
+  useEffect(() => {
+    loadDashboard();
+
+    const interval = setInterval(loadDashboard, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading)
+    return (
+      <Container sx={{ mt: 10, textAlign: "center" }}>
+        <CircularProgress />
+      </Container>
+    );
+
+  if (error)
+    return (
+      <Container sx={{ mt: 5 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
+
   return (
-    <div
-      style={{
-        padding: "30px",
-        fontFamily: "Arial"
-      }}
-    >
+    <>
+      <Navbar />
 
-      <h1>
-        🚨 Real-Time Fraud Detection Dashboard
-      </h1>
+      <Container maxWidth="xl">
+        <LiveStatus />
 
-      <div
-        style={{
-          display: "flex",
-          gap: "30px",
-          marginBottom: "30px"
-        }}
-      >
+        <DashboardCards metrics={metrics} />
 
-        <div>
-          <h3>Total Transactions</h3>
-          <h2>
-            {metrics.total_transactions}
-          </h2>
-        </div>
+        <FraudPieChart summary={summary} />
 
-        <div>
-          <h3>Fraud Alerts</h3>
-          <h2>
-            {metrics.fraud_alerts}
-          </h2>
-        </div>
+        <TransactionsTable transactions={transactions} />
 
-        <div>
-          <h3>Fraud Rate</h3>
-          <h2>
-            {metrics.fraud_rate}%
-          </h2>
-        </div>
-
-        <div>
-          <h3>Average Risk Score</h3>
-          <h2>
-            {metrics.avg_risk_score}
-          </h2>
-        </div>
-
-      </div>
-
-      <h2>Recent Transactions</h2>
-
-      <table
-        border="1"
-        cellPadding="10"
-        style={{
-          borderCollapse: "collapse",
-          width: "100%"
-        }}
-      >
-        <thead>
-
-          <tr>
-            <th>ID</th>
-            <th>Amount</th>
-            <th>Merchant</th>
-            <th>Hour</th>
-            <th>Risk Score</th>
-            <th>Prediction</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {transactions.map(
-            (tx) => (
-
-              <tr key={tx.id}>
-
-                <td>{tx.id}</td>
-
-                <td>
-                  {tx.amount}
-                </td>
-
-                <td>
-                  {tx.merchant_id}
-                </td>
-
-                <td>
-                  {tx.hour}
-                </td>
-
-                <td>
-                  {tx.risk_score}
-                </td>
-
-                <td>
-                  {tx.prediction}
-                </td>
-
-              </tr>
-
-            )
-          )}
-
-        </tbody>
-
-      </table>
-
-    </div>
+        <Footer />
+      </Container>
+    </>
   );
 }
 
 export default App;
-

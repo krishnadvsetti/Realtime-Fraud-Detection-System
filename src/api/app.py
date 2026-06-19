@@ -1,35 +1,95 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-
-import joblib
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import create_engine, text
 import pandas as pd
 
-app = FastAPI()
+app = FastAPI(
+    title="Real-Time Fraud Detection API",
+    version="1.0.0"
+)
 
-model = joblib.load("models/xgboost_model.pkl")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+DATABASE_URL = "postgresql://frauduser:fraudpass@localhost:5432/frauddb"
 
-class Transaction(BaseModel):
-    features: list
+engine = create_engine(DATABASE_URL)
 
 
 @app.get("/")
-def home():
+def root():
     return {"status": "Fraud Detection API Running"}
 
 
-@app.post("/predict")
-def predict(transaction: Transaction):
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
 
-    df = pd.DataFrame(
-        [transaction.features]
+
+@app.get("/metrics")
+def metrics():
+
+    df = pd.read_sql(
+        text("SELECT * FROM fraud_alerts"),
+        engine
     )
 
-    prediction = model.predict(df)[0]
+    total = len(df)
 
-    probability = model.predict_proba(df)[0][1]
+    frauds = len(
+        df[df["prediction"] == "FRAUD"]
+    )
+
+    fraud_rate = (
+        round((frauds / total) * 100, 2)
+        if total else 0
+    )
+
+    avg_risk = (
+        round(df["risk_score"].mean(), 2)
+        if total else 0
+    )
 
     return {
-        "prediction": int(prediction),
-        "fraud_probability": float(probability)
+        "total_transactions": total,
+        "fraud_alerts": frauds,
+        "fraud_rate": fraud_rate,
+        "avg_risk_score": avg_risk
     }
+
+
+@app.get("/transactions")
+def transactions():
+
+    df = pd.read_sql(
+        text("""
+        SELECT *
+        FROM fraud_alerts
+        ORDER BY id DESC
+        LIMIT 100
+        """),
+        engine
+    )
+
+    return df.to_dict(orient="records")
+
+
+@app.get("/fraud-summary")
+def fraud_summary():
+
+    df = pd.read_sql(
+        text("""
+        SELECT prediction,
+               COUNT(*) AS count
+        FROM fraud_alerts
+        GROUP BY prediction
+        """),
+        engine
+    )
+
+    return df.to_dict(orient="records")
