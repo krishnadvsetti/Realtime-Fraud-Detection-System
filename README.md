@@ -197,7 +197,7 @@ This enables users to understand why a transaction has been classified as fraudu
 ## Clone Repository
 
 ```bash
-git clone https://github.com/your-username/Realtime-Fraud-Detection-System.git
+git clone https://github.com/krishnadvsetti/Realtime-Fraud-Detection-System.git
 
 cd Realtime-Fraud-Detection-System
 ```
