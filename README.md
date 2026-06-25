@@ -10,33 +10,35 @@
 ![SHAP](https://img.shields.io/badge/SHAP-Explainable_AI-red)
 ![MLflow](https://img.shields.io/badge/MLflow-Experiment_Tracking-0194E2)
 
----
-
-## 📖 Overview
-
-The **Real-Time Fraud Detection System** is an end-to-end Machine Learning application designed to identify fraudulent financial transactions in real time. The system continuously streams transaction data through **Apache Kafka**, performs fraud prediction using an **XGBoost** model, stores prediction results in **PostgreSQL**, and provides live monitoring through a **React dashboard**.
-
-To improve model transparency, the system integrates **SHAP (SHapley Additive Explanations)**, enabling feature-level explanations for every prediction.
+A production-oriented machine learning platform for real-time fraud detection using Apache Kafka, FastAPI, PostgreSQL, XGBoost, SHAP Explainability, MLflow, Docker, and React.
 
 ---
 
-## ✨ Key Features
+# 📖 Overview
 
-* 🚀 Real-time transaction streaming using Apache Kafka
+The **Real-Time Fraud Detection System** is an end-to-end machine learning platform designed to detect fraudulent financial transactions in real time. The system streams transaction data through Apache Kafka, performs fraud prediction using an XGBoost model, stores prediction results in PostgreSQL, and provides live monitoring through a React dashboard.
+
+To improve model transparency, SHAP (SHapley Additive Explanations) is integrated to generate feature-level explanations for every prediction.
+
+---
+
+# ✨ Key Features
+
+* 📡 Real-time transaction streaming using Apache Kafka
 * 🤖 Fraud detection using XGBoost
-* 📊 SHAP Explainable AI for prediction interpretation
-* ⚡ FastAPI REST API
-* 🗄 PostgreSQL database integration
-* 📈 Live analytics dashboard built with React
-* 📉 Fraud monitoring and visualization
-* 📦 Dockerized development environment
+* 🔍 SHAP-based model explainability
+* ⚡ FastAPI REST APIs
+* 🗄️ PostgreSQL database integration
+* 📈 Interactive React dashboard
+* 📉 Live fraud monitoring and visualization
+* 🐳 Dockerized deployment
 * 🧪 MLflow experiment tracking
-* ⚙ Environment-based configuration using `.env`
+* ⚙️ Environment-based configuration
 * 📝 Centralized logging and error handling
 
 ---
 
-# 🏗 System Architecture
+# 🏗️ System Architecture
 
 ```text
                     +----------------------+
@@ -74,7 +76,7 @@ To improve model transparency, the system integrates **SHAP (SHapley Additive Ex
 
 ---
 
-# 🛠 Tech Stack
+# 🛠️ Tech Stack
 
 ## Backend
 
@@ -108,14 +110,12 @@ To improve model transparency, the system integrates **SHAP (SHapley Additive Ex
 ```text
 Realtime-Fraud-Detection-System/
 
-│
 ├── frontend/
 │   ├── src/
 │   ├── public/
 │   └── package.json
 │
 ├── models/
-│
 ├── notebooks/
 │
 ├── src/
@@ -164,7 +164,7 @@ Realtime-Fraud-Detection-System/
 
 ---
 
-# 📊 Dashboard Features
+# 📊 Dashboard
 
 The React dashboard provides live monitoring with:
 
@@ -172,27 +172,29 @@ The React dashboard provides live monitoring with:
 * Fraud Alerts
 * Fraud Rate
 * Average Risk Score
-* Fraud Distribution Chart
-* Recent Transactions Table
+* Fraud Distribution
+* Recent Transactions
+* Live Status Monitoring
 
 ---
 
-# 🧠 Explainable AI using SHAP
+# 🔍 SHAP Explainability
 
-The system integrates **SHAP (SHapley Additive Explanations)** to provide transparent and interpretable predictions.
+The prediction service integrates SHAP (SHapley Additive Explanations) to provide transparent model predictions.
 
-For every prediction, the API returns:
+Each prediction returns:
 
 * Fraud Prediction
-* Prediction Probability
-* Feature Importance Scores
-* Top Contributing Features
+* Fraud Probability
+* Risk Score
+* SHAP Feature Contributions
+* Top Influential Features
 
-This enables users to understand why a transaction has been classified as fraudulent.
+This enables users to understand the factors influencing every fraud prediction.
 
 ---
 
-# 🚀 Getting Started
+# ⚙️ Getting Started
 
 ## Clone Repository
 
@@ -202,9 +204,7 @@ git clone https://github.com/krishnadvsetti/Realtime-Fraud-Detection-System.git
 cd Realtime-Fraud-Detection-System
 ```
 
----
-
-## Backend Setup
+## Backend
 
 ```bash
 python -m venv .venv
@@ -216,9 +216,7 @@ pip install -r requirements.txt
 uvicorn src.api.app:app --reload
 ```
 
----
-
-## Frontend Setup
+## Frontend
 
 ```bash
 cd frontend
@@ -227,8 +225,6 @@ npm install
 
 npm run dev
 ```
-
----
 
 ## Docker
 
@@ -240,27 +236,26 @@ docker compose up -d
 
 # 📈 Monitoring
 
-The project includes:
+The platform includes:
 
-* Kafka Producer
-* Kafka Consumer
-* PostgreSQL Storage
+* Apache Kafka Producer
+* Apache Kafka Consumer
+* PostgreSQL Database
 * FastAPI Backend
 * React Dashboard
 * MLflow Experiment Tracking
 * SHAP Explainability
+* Centralized Logging
 
 ---
 
-# 🔮 Future Improvements
+# 📌 Future Improvements
 
 * JWT Authentication
 * Role-Based Access Control (RBAC)
 * WebSocket-based Live Updates
-* Cloud Deployment (AWS / Azure / GCP)
 * CI/CD Pipeline
 * Kubernetes Deployment
-* Model Monitoring & Drift Detection
-
----
+* Cloud Deployment (AWS, Azure or GCP)
+* Model Monitoring and Drift Detection
 
