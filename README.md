@@ -1,196 +1,266 @@
-
 # Real-Time Fraud Detection System
 
-## Overview
-
-A real-time fraud detection platform built using Kafka, XGBoost, FastAPI, Streamlit, Docker, and MLflow.
-
-The system simulates transaction streams, performs fraud scoring in real time, stores fraud alerts, and visualizes operational metrics through an interactive monitoring dashboard.
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688)
+![React](https://img.shields.io/badge/React-Frontend-61DAFB)
+![Kafka](https://img.shields.io/badge/Apache_Kafka-Streaming-black)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791)
+![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED)
+![XGBoost](https://img.shields.io/badge/XGBoost-Machine_Learning-orange)
+![SHAP](https://img.shields.io/badge/SHAP-Explainable_AI-red)
+![MLflow](https://img.shields.io/badge/MLflow-Experiment_Tracking-0194E2)
 
 ---
 
-## Architecture
+## 📖 Overview
+
+The **Real-Time Fraud Detection System** is an end-to-end Machine Learning application designed to identify fraudulent financial transactions in real time. The system continuously streams transaction data through **Apache Kafka**, performs fraud prediction using an **XGBoost** model, stores prediction results in **PostgreSQL**, and provides live monitoring through a **React dashboard**.
+
+To improve model transparency, the system integrates **SHAP (SHapley Additive Explanations)**, enabling feature-level explanations for every prediction.
+
+---
+
+## ✨ Key Features
+
+* 🚀 Real-time transaction streaming using Apache Kafka
+* 🤖 Fraud detection using XGBoost
+* 📊 SHAP Explainable AI for prediction interpretation
+* ⚡ FastAPI REST API
+* 🗄 PostgreSQL database integration
+* 📈 Live analytics dashboard built with React
+* 📉 Fraud monitoring and visualization
+* 📦 Dockerized development environment
+* 🧪 MLflow experiment tracking
+* ⚙ Environment-based configuration using `.env`
+* 📝 Centralized logging and error handling
+
+---
+
+# 🏗 System Architecture
 
 ```text
-Transaction Generator
-        │
-        ▼
-Kafka Producer
-        │
-        ▼
-Kafka Topic
-        │
-        ▼
-Kafka Consumer
-        │
-        ▼
-XGBoost Fraud Detection Model
-        │
-        ▼
-Fraud Alerts Storage
-        │
-        ▼
-Streamlit Dashboard
+                    +----------------------+
+                    | Transaction Generator|
+                    +----------+-----------+
+                               |
+                               ▼
+                    +----------------------+
+                    |    Apache Kafka      |
+                    +----------+-----------+
+                               |
+                               ▼
+                    +----------------------+
+                    | Fraud Detection      |
+                    | Consumer (XGBoost)   |
+                    +----------+-----------+
+                               |
+                 Prediction + Risk Score
+                               |
+                               ▼
+                    +----------------------+
+                    |     PostgreSQL       |
+                    +----------+-----------+
+                               |
+                               ▼
+                    +----------------------+
+                    |      FastAPI API     |
+                    +----------+-----------+
+                               |
+                               ▼
+                    +----------------------+
+                    |   React Dashboard    |
+                    +----------------------+
 ```
 
 ---
 
-## Features
+# 🛠 Tech Stack
 
-* Real-time transaction streaming with Kafka
-* Fraud detection using XGBoost
-* FastAPI model serving
-* Interactive Swagger API documentation
-* Fraud alert generation and persistence
-* Streamlit monitoring dashboard
-* MLflow experiment tracking
-* Docker-based local deployment
+## Backend
 
----
-
-## Tech Stack
-
-* Python
-* XGBoost
-* Kafka
 * FastAPI
-* Streamlit
+* SQLAlchemy
+* PostgreSQL
+* Apache Kafka
 * Docker
-* MLflow
-* Pandas
+
+## Machine Learning
+
+* XGBoost
 * Scikit-learn
+* Pandas
+* NumPy
+* SHAP
+* MLflow
+* Joblib
+
+## Frontend
+
+* React
+* Material UI
+* Axios
+* Chart.js
 
 ---
 
-## Project Structure
+# 📂 Project Structure
 
 ```text
-src/
-├── api/
-├── data/
-├── monitoring/
-├── streaming/
-├── training/
-└── utils/
+Realtime-Fraud-Detection-System/
 
-models/
-data/
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+├── models/
+│
+├── notebooks/
+│
+├── src/
+│   ├── api/
+│   ├── database/
+│   ├── explainability/
+│   ├── monitoring/
+│   ├── streaming/
+│   ├── training/
+│   └── utils/
+│
+├── docker-compose.yml
+├── requirements.txt
+├── README.md
+├── .env.example
+└── frontend/.env.example
 ```
 
 ---
 
-## Model Performance
+# 🤖 Machine Learning Pipeline
 
-### Credit Card Fraud Dataset
-
-* Precision: 0.75
-* Recall: 0.87
-* ROC-AUC: 0.982
-
-### Streaming Fraud Model
-
-* Accuracy: 97.99%
-* Precision: 99.45%
-* Recall: 78.59%
-* ROC-AUC: 88.95%
+1. Data Collection
+2. Data Preprocessing
+3. Feature Engineering
+4. Class Imbalance Handling
+5. Model Training (XGBoost)
+6. Model Evaluation
+7. MLflow Experiment Tracking
+8. Model Serialization
+9. Real-Time Inference
+10. SHAP Explainability
 
 ---
 
-## Running the Project
+# 🌐 REST API Endpoints
 
-### Start Kafka
+| Method | Endpoint         | Description                            |
+| ------ | ---------------- | -------------------------------------- |
+| GET    | `/`              | Application status                     |
+| GET    | `/health`        | API health check                       |
+| GET    | `/metrics`       | Fraud detection statistics             |
+| GET    | `/transactions`  | Latest transactions                    |
+| GET    | `/fraud-summary` | Fraud vs Genuine summary               |
+| POST   | `/predict`       | Fraud prediction with SHAP explanation |
+
+---
+
+# 📊 Dashboard Features
+
+The React dashboard provides live monitoring with:
+
+* Total Transactions
+* Fraud Alerts
+* Fraud Rate
+* Average Risk Score
+* Fraud Distribution Chart
+* Recent Transactions Table
+
+---
+
+# 🧠 Explainable AI using SHAP
+
+The system integrates **SHAP (SHapley Additive Explanations)** to provide transparent and interpretable predictions.
+
+For every prediction, the API returns:
+
+* Fraud Prediction
+* Prediction Probability
+* Feature Importance Scores
+* Top Contributing Features
+
+This enables users to understand why a transaction has been classified as fraudulent.
+
+---
+
+# 🚀 Getting Started
+
+## Clone Repository
+
+```bash
+git clone https://github.com/your-username/Realtime-Fraud-Detection-System.git
+
+cd Realtime-Fraud-Detection-System
+```
+
+---
+
+## Backend Setup
+
+```bash
+python -m venv .venv
+
+source .venv/bin/activate
+
+pip install -r requirements.txt
+
+uvicorn src.api.app:app --reload
+```
+
+---
+
+## Frontend Setup
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+## Docker
 
 ```bash
 docker compose up -d
 ```
 
-### Start Consumer
+---
 
-```bash
-python src/streaming/consumer.py
-```
+# 📈 Monitoring
 
-### Start Producer
+The project includes:
 
-```bash
-python src/streaming/producer.py
-```
-
-### Start Dashboard
-
-```bash
-streamlit run src/monitoring/dashboard.py --server.port 8501
-```
-
-### Start API
-
-```bash
-uvicorn src.api.app:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Start MLflow
-
-```bash
-mlflow ui --host 0.0.0.0 --port 5000
-```
+* Kafka Producer
+* Kafka Consumer
+* PostgreSQL Storage
+* FastAPI Backend
+* React Dashboard
+* MLflow Experiment Tracking
+* SHAP Explainability
 
 ---
 
-## Production Architecture
+# 🔮 Future Improvements
 
-```text
-┌──────────────────────────────┐
-│      Transaction Stream      │
-│     Synthetic Generator      │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│        Kafka Producer        │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│         Kafka Topic          │
-│        transactions          │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│        Kafka Consumer        │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│     XGBoost Fraud Model      │
-│  streaming_fraud_model.pkl   │
-└──────────────┬───────────────┘
-               │
-      ┌────────┴────────┐
-      │                 │
-      ▼                 ▼
-┌─────────────┐  ┌─────────────┐
-│ FastAPI API │  │ Fraud Alerts│
-│   Serving   │  │     CSV     │
-└──────┬──────┘  └──────┬──────┘
-       │                │
-       ▼                ▼
-┌─────────────┐  ┌─────────────┐
-│ Swagger UI  │  │ Streamlit   │
-│ API Testing │  │ Dashboard   │
-└─────────────┘  └──────┬──────┘
-                        │
-                        ▼
-               ┌────────────────┐
-               │ Fraud Analytics│
-               │ Risk Monitoring│
-               │ Alert Tracking │
-               └────────────────┘
+* JWT Authentication
+* Role-Based Access Control (RBAC)
+* WebSocket-based Live Updates
+* Cloud Deployment (AWS / Azure / GCP)
+* CI/CD Pipeline
+* Kubernetes Deployment
+* Model Monitoring & Drift Detection
 
-        ┌────────────────────┐
-        │       MLflow       │
-        │ Experiment Tracking│
-        │ Metrics & Models   │
-        └────────────────────┘
-```
+---
 

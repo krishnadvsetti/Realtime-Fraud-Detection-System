@@ -229,3 +229,30 @@ mlruns/
 mlflow.db
 __pycache__/
 *.pyc
+# ==========================
+# Environment Variables
+# ==========================
+.env
+.env.*
+!.env.example
+
+# Frontend Environment
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# ==========================
+# Frontend
+# ==========================
+frontend/node_modules/
+
+# ==========================
+# Trained Models
+# ==========================
+models/*.pkl
+
+# ==========================
+# Operating System
+# ==========================
+.DS_Store
+Thumbs.db

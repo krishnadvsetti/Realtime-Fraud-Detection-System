@@ -8,10 +8,11 @@ import TransactionsTable from "./components/TransactionsTable";
 import LiveStatus from "./components/LiveStatus";
 import Footer from "./components/Footer";
 
-import axios from "axios";
-
-const API =
-  "https://friendly-invention-xr5gvxgg7w9wc6wq7-8000.app.github.dev";
+import {
+  getMetrics,
+  getTransactions,
+  getFraudSummary,
+} from "./services/api";
 
 function App() {
   const [metrics, setMetrics] = useState(null);
@@ -23,29 +24,37 @@ function App() {
 
   const loadDashboard = async () => {
     try {
+      
+
       const [m, s, t] = await Promise.all([
-        axios.get(`${API}/metrics`),
-        axios.get(`${API}/fraud-summary`),
-        axios.get(`${API}/transactions`),
+        getMetrics(),
+        getFraudSummary(),
+        getTransactions(),
       ]);
+
+     
+
 
       setMetrics(m.data);
       setSummary(s.data);
       setTransactions(t.data);
 
-      setLoading(false);
       setError("");
     } catch (err) {
       console.error(err);
+    
+      setError(err.message);
+    } finally {
       setLoading(false);
-      setError("Unable to connect to backend.");
     }
   };
 
   useEffect(() => {
     loadDashboard();
 
+
     const interval = setInterval(loadDashboard, 5000);
+
 
     return () => clearInterval(interval);
   }, []);
